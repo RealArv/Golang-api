@@ -55,7 +55,7 @@ type finalJsonStruct struct {
 
 func main() {
 
-	byteValue, _ := ioutil.ReadFile("new.json")
+	byteValue, _ := ioutil.ReadFile("airlines.json")
 	var inputData []inputJsonStruct
 	output := []finalJsonStruct{}
 	err := json.Unmarshal([]byte(byteValue), &inputData)
@@ -71,8 +71,6 @@ func main() {
 			output = append(output, finalJsonStruct{value.Statistics.Flights.Total, value.Statistics.MinutesDelayed.Total, value.Time.Label})
 		}
 	}
-
-	fmt.Println(output)
 
 	finalJson, err := json.MarshalIndent(output, "", "\t")
 
