@@ -1,27 +1,37 @@
 <template>
     <div class="form">
         <form @submit.prevent="airportRequest" method="POST">
-            <label for="">Enter airport code</label>
-            <input type="text" v-model="formData.code">
-            <br><br>
-            <label for="">Upload JSON file</label>
-            <input type="file" @change="selectFile" ref="file">
-            <br><br>
-            <Button @click="flush" type="submit" text="View results" color="green"/>
+        <div class="mb-3 row">
+            <label for="" class="col-sm-2 col-form-label">Enter airport code</label>
+            <div class="col-sm-10">
+                <input type="text" v-model="formData.code" class="form-control">
+            </div>
+        </div>
+        <div class="mb-3 row">
+             <label for="" class="col-sm-2 col-form-label">Upload JSON file</label>
+             <div class="col-sm-10">
+                 <input type="file" @change="selectFile" ref="file">
+             </div>
+        </div>
+            <Button @click="flush" type="submit" text="View results" color="green" class="m-3"/>
             <!-- <Button @click="flush" text="Clear results" color="blue"/> -->
         </form>
 
-        <table>
-            <tr>
-                <th>Total Flights</th>
-                <th>Total Minutes Delayed</th>
-                <th>Time Label</th>
-            </tr>
-            <tr v-for="get in formData" :key="get.id">
-                <td>{{get.Total_Flights}}</td>
-                <td>{{get.Total_Minutes_Delayed}}</td>
-                <td>{{get.Time_Label}}</td>
-            </tr>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Total Flights</th>
+                    <th>Total Minutes Delayed</th>
+                    <th>Time Label</th>
+                </tr>
+            </thead>
+            <thead>
+                <tr v-for="get in formData" :key="get.id">
+                    <td>{{get.Total_Flights}}</td>
+                    <td>{{get.Total_Minutes_Delayed}}</td>
+                    <td>{{get.Time_Label}}</td>
+                </tr>
+            </thead>
         </table>
     </div>
 </template>
@@ -59,7 +69,7 @@
                 for (let key in gets) {
                     this.formData.push({ ...gets[key], id:key})
                 }
-                console.log(this.formData)
+                // console.log(this.formData)
             },
 
             selectFile() {   
@@ -82,7 +92,7 @@
                         let content = JSON.parse(JSON.stringify(response))
                         this.formatGetDetails(content.data.file)
                         // this.formData = content.data
-                        console.log(content.data)
+                        // console.log(content.data)
                     })
                     .catch(error => console.log(error))
             },
