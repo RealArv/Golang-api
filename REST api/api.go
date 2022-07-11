@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	cors "github.com/rs/cors/wrapper/gin"
@@ -70,43 +72,40 @@ func main() {
 		panic(err)
 	}
 
-	var temp string = "CLT"
-
-	for _, value := range inputData {
-		if value.Airport.Code == temp {
-			output = append(output, finalJsonStruct{value.Statistics.Flights.Total, value.Statistics.MinutesDelayed.Total, value.Time.Label})
-		}
-	}
-
-	// finalJson, err := json.Marshal(output)
-	// finalJson, err := json.MarshalIndent(output, "", "\t")
-
 	if err != nil {
 		panic(err)
 	}
 
-	// fmt.Printf("%s\n", finalJson)
-
 	router := gin.Default()
 	router.Use(cors.AllowAll())
 
-	router.GET("/get", func(c *gin.Context) {
-		c.JSON(http.StatusOK, output)
-	})
-
-	//under work
-
-	// router.POST("/post", func(c *gin.Context) {
-	// 	body := c.Request.Body
-	// 	value, err := ioutil.ReadAll(body)
-	// 	if err !=nil {
-	// 		fmt.Println(err.Error())
-	// 	}
-
-	// 	c.JSON(200, gin.H{
-
-	// 	})
+	//GET request
+	// router.GET("/get", func(c *gin.Context) {
+	// 	c.JSON(http.StatusOK, output)
 	// })
+
+	router.POST("/post", func(c *gin.Context) {
+		code := c.PostForm("code")
+		file, _ := c.FormFile("file")
+		out, err := os.Open(file.Filename)
+		byteValue, _ := ioutil.ReadFile(out.Name())
+		errr := json.Unmarshal([]byte(byteValue), &inputData)
+
+		for _, value := range inputData {
+			if value.Airport.Code == code {
+				output = append(output, finalJsonStruct{value.Statistics.Flights.Total, value.Statistics.MinutesDelayed.Total, value.Time.Label})
+			}
+		}
+
+		if err != nil {
+			fmt.Println(errr)
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"code": code,
+			"file": output,
+		})
+	})
 
 	router.Run("localhost:9090")
 
