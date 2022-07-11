@@ -62,24 +62,13 @@ type finalJsonStruct struct {
 
 //Requests
 func main() {
-
-	byteValue, _ := ioutil.ReadFile("airlines.json")
 	var inputData []inputJsonStruct
 	output := []finalJsonStruct{}
-	err := json.Unmarshal([]byte(byteValue), &inputData)
-
-	if err != nil {
-		panic(err)
-	}
-
-	if err != nil {
-		panic(err)
-	}
 
 	router := gin.Default()
 	router.Use(cors.AllowAll())
 
-	//GET request
+	// GET request
 	// router.GET("/get", func(c *gin.Context) {
 	// 	c.JSON(http.StatusOK, output)
 	// })
@@ -97,16 +86,22 @@ func main() {
 			}
 		}
 
+		// fmt.Println(output)
+
 		if err != nil {
 			fmt.Println(errr)
+			c.JSON(500, gin.H{
+				"error": "Some error is there",
+			})
 		}
 
 		c.JSON(http.StatusOK, gin.H{
 			"code": code,
 			"file": output,
 		})
+
+		output = nil
 	})
 
 	router.Run("localhost:9090")
-
 }
