@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/gin-gonic/gin"
 	cors "github.com/rs/cors/wrapper/gin"
@@ -76,6 +77,13 @@ func main() {
 	router.POST("/post", func(c *gin.Context) {
 		code := c.PostForm("code")
 		file, _ := c.FormFile("file")
+
+		filename := filepath.Base(file.Filename)
+		if err := c.SaveUploadedFile(file, filename); err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+			return
+		}
+
 		out, err := os.Open(file.Filename)
 		byteValue, _ := ioutil.ReadFile(out.Name())
 		errr := json.Unmarshal([]byte(byteValue), &inputData)
